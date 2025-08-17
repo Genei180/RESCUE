@@ -1,7 +1,7 @@
 # ADR {Number}: {Title of Decision}
 
 ## Status
-Proposed | Accepted | Deprecated | Superseded
+Accepted | Deprecated | Superseded
 
 ## Context
 Explain the context and background for the decision:
