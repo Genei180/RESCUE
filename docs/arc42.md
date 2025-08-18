@@ -155,7 +155,7 @@ flowchart TD
 
 ## 5. Building Block View
 
-´´´mermaid
+```mermaid
 flowchart TD
 
     subgraph Tracker_Project["Tracker Project"]
@@ -173,8 +173,7 @@ flowchart TD
     FN <-- LoRaWan --> GW
     GW <-- MQTT --> BE
     BE <-- API --> FE
-
-´´´
+```
 
 ## 10. QUality Requirments
 
