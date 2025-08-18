@@ -13,9 +13,9 @@ It should provide but not be Limited to the Following Use Cases:
 - **Visualization of Searched Areas**: Visualize areas that have been searched to easily identify where personnel may be missing or where searches have not been conducted.
 
 ## Quality Goals
-2. **Independent** It should be functional without external Infastrukture.
-3. **Easy too Use**, everything should be Easy too use and Self Explanatory. Be it for Leaders or for Rescue Forces on the Ground.
-4. **Fast to Deploy** should be Deployable in Minutes or Seconds
+1. **Independent** It should be functional without external Infastrukture.
+2. **Easy too Use**, everything should be Easy too use and Self Explanatory. Be it for Leaders or for Rescue Forces on the Ground.
+3. **Fast to Deploy** should be Deployable in Minutes or Seconds
 
 ## Architecture Constraints
 
@@ -71,6 +71,8 @@ Primary stakeholders:
 
     Rescue personnel — carry GPS trackers during operations.
 
+    Developer - Develops the Application and Hardware
+
 Out of scope:
 
     Long-term historical data storage for movement analysis.
@@ -79,4 +81,104 @@ Out of scope:
 
 ### 3.2 Technical Context
 
-TBD...
+#### 3.2.1 System Overview
+
+The system is based on Meshtastic LoRa mesh devices, connected optionally to mobile apps and a central backend.
+
+Field Devices (LoRa nodes): Meshtastic-compatible devices carried by volunteers. They send/receive GPS data and short messages.
+
+Mobile Apps (Android/iOS): Provide UI for volunteers to view maps, locations, and send messages.
+
+Gateway Nodes: Special devices that bridge the LoRa mesh to the internet when available.
+
+Backend / Server: Collects, stores, and visualizes location data. Provides dashboards and integration with other systems (e.g., rescue coordination tools).
+
+Web Frontend: Displays live maps and device status for team leaders.
+
+#### 3.2.2 External Interfaces
+
+The system components communicate through the following interfaces:
+
+##### Android Services
+The Navigation App interacts with the Meshtastic App on Android/iOS devices.
+Provides services such as map display, Information sharing, and message forwarding.
+
+##### Bluetooth
+The Meshtastic App connects to Field Nodes (Meshtastic Devices) via Bluetooth Low Energy (BLE).
+Used for configuration and data exchange. This is Handled by the Meshtastic Firmware.
+
+##### LoRaWAN
+Field Nodes form a peer-to-peer mesh network using LoRa radio technology.
+Enables long-range, low-bandwidth communication between devices and Gateway Nodes.
+This is Handled by Meshtastic.
+
+##### MQTT
+Gateway Nodes forward messages to the Backend Server via MQTT.
+Provides lightweight, publish/subscribe messaging for device telemetry and location data.
+The MQTT Publish is handled by the Meshtastic Firmware.
+
+##### API
+The Backend Server exposes APIs consumed by the Web Frontend
+Supports live maps.
+
+### 3.3 Context Diagramm
+
+```mermaid
+flowchart TD
+
+    subgraph Tracker_Project["Tracker Project (System Under Development)"]
+        APP["(Optional) Coordination App"]
+        NODE["Tracking Node"]
+        FE["Web Frontend (Maps, Dashboard)"]
+    end
+
+    SL["Squad Leader"]
+    RP["Rescue Personnel"]
+    TL["Team Leader / Dispatch (Operations Center)"]
+    MAP["Mapping Services (OpenStreetMap, etc.)"]
+
+    NODE -- Sends GPS Data --> FE
+    FE -- Send Orders --> NODE
+    APP <-- Communicate Order Information --> NODE
+    SL <-- Uses --> APP
+    RP -- Carries --> NODE
+    TL <-- Monitors --> FE
+    FE <-- Map Data --> MAP
+```
+
+## 4. Solution Strategy
+
+### Iterative Prototyping
+
+- Prototyping Nahbaden
+
+
+## 5. Building Block View
+
+´´´mermaid
+flowchart TD
+
+    subgraph Tracker_Project["Tracker Project"]
+        NAVAPP["Navigation App (Web/Android/iOS)"]
+        APP["Meshtastic App (Android/iOS)"]
+        FN["Field Nodes (Meshtastic Devices)"]
+        GW[Gateway Node]
+        BE[Backend Server]
+        FE[Web Frontend]
+    end
+
+    NAVAPP <-- Service --> APP
+    APP <-- Bluetooth --> FN
+    FN <-- LoRaWan --> FN
+    FN <-- LoRaWan --> GW
+    GW <-- MQTT --> BE
+    BE <-- API --> FE
+
+´´´
+
+## 10. QUality Requirments
+
+
+### 10.1 Quality Tree
+
+### 10.2 Quality Scenarios

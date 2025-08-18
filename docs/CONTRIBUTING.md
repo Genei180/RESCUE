@@ -10,7 +10,7 @@
 
 ## Workflow
 1. Fork the repo and create a feature branch.
-2. For big changes, start with an RFC (see `docs/architecture/rfcs`).
+2. For big changes, start with an RFC (see `Issues -> RFC Template`).
 3. For small changes, open an Issue or PR directly.
 4. All code changes must go through Pull Requests.
 5. Decisions are documented as ADRs.
