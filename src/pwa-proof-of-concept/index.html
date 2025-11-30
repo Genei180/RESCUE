@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RESCUE PWA Proof</title>
+  <link rel="manifest" href="manifest.json">
+  <style>body{font-family:sans-serif;padding:1rem} label{display:block;margin-top:.5rem}</style>
+</head>
+<body>
+  <h1>RESCUE — PWA Proof</h1>
+  <p>Minimal demo: add PositionUpdates stored in IndexedDB and list them.</p>
+
+  <label>Operation ID <input id="operationId" value="op-123" /></label>
+  <label>Device ID <input id="deviceId" value="device-1" /></label>
+  <label>Lat <input id="lat" value="51.0" /></label>
+  <label>Lon <input id="lon" value="9.0" /></label>
+  <button id="add">Add Position</button>
+
+  <h2>Positions</h2>
+  <ul id="list"></ul>
+
+  <script type="module">
+    import { openDB } from './idb.js';
+
+    const db = await openDB('rescue-situation-map', 1, {
+      upgrade(db){
+        db.createObjectStore('positions', { keyPath: 'id' });
+      }
+    });
+
+    const addBtn = document.getElementById('add');
+    const list = document.getElementById('list');
+
+    async function refresh(){
+      list.innerHTML='';
+      // use the promise-based helper getAll exposed by idb.js wrapper
+      const all = await db.getAll('positions');
+      for(const p of all || []){
+        const li = document.createElement('li');
+        li.textContent = `${p.id} — ${p.deviceId} @ ${p.lat},${p.lon} (${new Date(p.timestamp).toLocaleString()})`;
+        list.appendChild(li);
+      }
+    }
+
+    addBtn.addEventListener('click', async ()=>{
+      const op = document.getElementById('operationId').value;
+      const did = document.getElementById('deviceId').value;
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lon = parseFloat(document.getElementById('lon').value);
+      const id = `${did}-${Date.now()}`;
+      await db.put('positions',{ id, operationId: op, deviceId: did, lat, lon, timestamp: Date.now() });
+      await refresh();
+    });
+
+    await refresh();
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
+  </script>
+</body>
+</html>
