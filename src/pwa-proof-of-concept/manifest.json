@@ -1,0 +1,9 @@
+{
+  "name": "RESCUE PWA Proof",
+  "short_name": "RESCUE",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2b6cb0",
+  "icons": []
+}
